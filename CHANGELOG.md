@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### 文档与实现一致性（2026-11-20）
+
+- **修正 README 过时的方法术语**：Roadmap「收窄统计」段原写 `Wilson intervals are wide`，但 `t2/lib/stats.mjs` 已在 11-01 重构中把区间估计换为 task-cluster 配对 bootstrap（2000 次、固定种子），Wilson 实现不再存在。README / README.zh-CN 两处同步改为 `paired-bootstrap intervals` / `配对 bootstrap 区间`。`--dry` 实测当前汇总行输出 `paired lift ... 区间 [...]（task-cluster bootstrap 2000 次）`，与文档一致。数字指纹守卫不受措辞改动影响，全套 `npm test` 15/15 全绿。
+
 ### 仓库改名与链接一致性（2026-11-20）
 
 - **仓库 slug 规范化**：仓库由 `agent-evals` 改名为 `Agent-Evals`（仅大小写）。`github.com/<old>` 靠 301 仍可达，但 `username.github.io/<old>` 大小写敏感、实测返回 404——README / README.zh-CN / llms.txt 首屏的 Live leaderboard 链接全断。已将全仓 25 处指向本仓的 URL（含 badge / CITATION / CHANGELOG 链接定义 / docs 索引 / 两张 hero SVG 的品牌字样 / SECURITY / issue 模板）统一改为当前 slug `kumu314/Agent-Evals`，实测 `https://kumu314.github.io/Agent-Evals/` 返回 200。`package.json` 的 npm 包名 `agent-evals` 保持不变（包名非仓库名）。
