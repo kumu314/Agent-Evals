@@ -4,8 +4,8 @@ title: "agent-evals: deterministic regression evals for AI agents"
 type: software
 authors:
   - name: "kumu314"
-repository-code: "https://github.com/kumu314/agent-evals"
-url: "https://github.com/kumu314/agent-evals"
+repository-code: "https://github.com/kumu314/Agent-Evals"
+url: "https://github.com/kumu314/Agent-Evals"
 license: MIT
 version: "0.3.0"
 keywords:

@@ -63,6 +63,7 @@ node merge-eval/drill-merge-eval.mjs
 node fleet-eval/drill-a1a2.mjs
 node guard-readme-numbers.mjs
 node scripts/check-agents-doc.mjs
+node scripts/check-repo-links.mjs
 ```
 
 `npm test` is `node run-checks.mjs`: the whole zero-API, zero-network sequence in one command,

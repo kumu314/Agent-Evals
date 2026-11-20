@@ -4,6 +4,12 @@
 
 ## [Unreleased]
 
+### 仓库改名与链接一致性（2026-11-20）
+
+- **仓库 slug 规范化**：仓库由 `agent-evals` 改名为 `Agent-Evals`（仅大小写）。`github.com/<old>` 靠 301 仍可达，但 `username.github.io/<old>` 大小写敏感、实测返回 404——README / README.zh-CN / llms.txt 首屏的 Live leaderboard 链接全断。已将全仓 25 处指向本仓的 URL（含 badge / CITATION / CHANGELOG 链接定义 / docs 索引 / 两张 hero SVG 的品牌字样 / SECURITY / issue 模板）统一改为当前 slug `kumu314/Agent-Evals`，实测 `https://kumu314.github.io/Agent-Evals/` 返回 200。`package.json` 的 npm 包名 `agent-evals` 保持不变（包名非仓库名）。
+- **新增仓库 slug 一致性守卫** `scripts/check-repo-links.mjs`（零网络、零依赖）：以 `CITATION.cff` 的 `repository-code` 为规范 slug 唯一来源，扫描所有跟踪文件里 `github.com/<owner>/<repo>` 与 `<owner>.github.io/<repo>` 两类 URL，repo 段与规范不符即 fail-closed 退 1。为何不用可达性（HEAD 200）检查：那需要联网，违背本项目「零网络自检」纪律；本守卫只证明「文档里指向本仓的 URL 用的是同一个当前 slug」，可达性留给人工与 Pages 部署状态。自带 selftest（正对照零违规 / 负对照混入旧 slug 必报两条，实测 0/2）。接入 `npm test` 与 CI 各两步，`npm test` 13 → 15 步，实测 15/15 全绿。
+- **AGENTS.md** 守卫命令清单补列 `node scripts/check-repo-links.mjs`。
+
 ### 本次修缮（2026-10-19 ~ 10-20，v0.3.0 发版后）
 
 - **新增 t2 并发执行**：`smoke-ab.mjs` 的 task × arm × trial cell 由串行 `await` 改为并发跑（上限 4，`T2_CONCURRENCY` 可覆盖；瞬时 503/429 仍由 `ask()` 退避重试兜底），结果按原始下标写回，`rows` 呈现顺序与串行版逐字节一致。负对照：并发重构前后 48 个 cell 的逐条输出逐字节一致（整段 `--dry` stdout 的唯一差异是汇总行新增 Wilson 区间），任何读数与口径不受并发影响。
@@ -135,7 +141,7 @@
 ### 设计口径
 - 能确定性判定就不请 LLM 当裁判；证据只认外部可复读物证（sha256/远端读数/退出码）；面向稳定资产判 `pass^k`；看到红先怀疑判据。
 
-[Unreleased]: https://github.com/kumu314/agent-evals/compare/v0.3.0...HEAD
-[0.3.0]: https://github.com/kumu314/agent-evals/compare/v0.2.0...v0.3.0
-[0.2.0]: https://github.com/kumu314/agent-evals/compare/v0.1.0...v0.2.0
-[0.1.0]: https://github.com/kumu314/agent-evals/tree/v0.1.0
+[Unreleased]: https://github.com/kumu314/Agent-Evals/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/kumu314/Agent-Evals/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/kumu314/Agent-Evals/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/kumu314/Agent-Evals/tree/v0.1.0

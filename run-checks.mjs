@@ -69,6 +69,14 @@ const STEPS = [
     name: 'AGENTS.md 漂移守卫（文档点名的路径/命令/旗标须仍在仓里）',
     argv: ['scripts/check-agents-doc.mjs'],
   },
+  {
+    name: '仓库 slug 一致性守卫自检（负对照：证明门会红）',
+    argv: ['scripts/check-repo-links.mjs', '--selftest'],
+  },
+  {
+    name: '仓库 slug 一致性守卫（文档中指向本仓的 URL 须用当前 slug）',
+    argv: ['scripts/check-repo-links.mjs'],
+  },
 ];
 
 function run(step) {

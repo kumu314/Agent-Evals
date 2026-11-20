@@ -132,5 +132,5 @@
         font-size="18" fill="#64748b">零运行时依赖   ·   node ≥ 20.11   ·   MIT</text>
   <text x="1504" y="520" text-anchor="end"
         font-family="ui-monospace, 'SFMono-Regular', Consolas, 'Liberation Mono', monospace"
-        font-size="16" fill="#64748b">kumu314/agent-evals</text>
+        font-size="16" fill="#64748b">kumu314/Agent-Evals</text>
 </svg>

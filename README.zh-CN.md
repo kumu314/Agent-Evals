@@ -4,14 +4,14 @@
 
 ![agent-evals — 给 AI agent 的确定性评测](assets/hero-banner.zh-CN.svg)
 
-[![ci](https://github.com/kumu314/agent-evals/actions/workflows/ci.yml/badge.svg)](https://github.com/kumu314/agent-evals/actions/workflows/ci.yml)
+[![ci](https://github.com/kumu314/Agent-Evals/actions/workflows/ci.yml/badge.svg)](https://github.com/kumu314/Agent-Evals/actions/workflows/ci.yml)
 [![license: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
 [![node](https://img.shields.io/badge/node-20.11%2B-brightgreen.svg)](package.json)
 [![runtime deps](https://img.shields.io/badge/runtime%20deps-zero-blue.svg)](package.json)
 [![version](https://img.shields.io/badge/version-0.3.0-lightgrey.svg)](CHANGELOG.md)
 [![models measured](https://img.shields.io/badge/models%20measured-11-8ab4f8.svg)](docs/t2-results.md)
 
-**在线榜单：** <https://kumu314.github.io/agent-evals/>
+**在线榜单：** <https://kumu314.github.io/Agent-Evals/>
 
 > **一句话结论** — 在一把锁定的确定性 8 任务 A/B 尺子（`temperature=0`、AND 门判分）上，注入一条写得好的 skill 能抬升模型通过率。**11 个模型**的抬升跨度为 **+4 ~ +75 个百分点**——其中 10 个越过 +38，唯一的能力下限是 glm-4-flash。没有 LLM 裁判、不靠感觉：这里每个数字都是一条可重跑的断言。
 

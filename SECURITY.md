@@ -2,7 +2,7 @@
 
 ## 报告漏洞
 
-发现安全问题时，请开 **private issue**（GitHub 安全告警页：https://github.com/kumu314/agent-evals/security/advisories/new），不要开公开 issue——本仓库被他人 fork/引用后，公开披露会给还没修的用户留窗口期。
+发现安全问题时，请开 **private issue**（GitHub 安全告警页：https://github.com/kumu314/Agent-Evals/security/advisories/new），不要开公开 issue——本仓库被他人 fork/引用后，公开披露会给还没修的用户留窗口期。
 
 非敏感的一般问题请走普通 issue（见 CONTRIBUTING.md）。
 

@@ -55,3 +55,7 @@ jobs:
         run: node scripts/check-agents-doc.mjs --selftest
       - name: AGENTS.md 漂移守卫（文档点名的路径/命令/旗标须仍在仓里）
         run: node scripts/check-agents-doc.mjs
+      - name: 仓库 slug 一致性守卫自检（负对照证明门会红）
+        run: node scripts/check-repo-links.mjs --selftest
+      - name: 仓库 slug 一致性守卫（文档中的本仓 URL 须用当前 slug，零网络）
+        run: node scripts/check-repo-links.mjs
