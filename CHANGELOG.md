@@ -6,7 +6,7 @@
 
 ### 本次修缮（2026-10-19 ~ 10-20，v0.3.0 发版后）
 
-- **新增 t2 并发执行**：`smoke-ab.mjs` 的 task × arm × trial cell 由串行 `await` 改为并发跑（上限 4，`T2_CONCURRENCY` 可覆盖；瞬时 503/429 仍由 `ask()` 退避重试兜底），结果按原始下标写回，`rows` 呈现顺序与串行版逐字节一致。负对照：`--dry` stdout 改前改后 SHA256 相同，任何读数与口径不受并发影响。
+- **新增 t2 并发执行**：`smoke-ab.mjs` 的 task × arm × trial cell 由串行 `await` 改为并发跑（上限 4，`T2_CONCURRENCY` 可覆盖；瞬时 503/429 仍由 `ask()` 退避重试兜底），结果按原始下标写回，`rows` 呈现顺序与串行版逐字节一致。负对照：并发重构前后 48 个 cell 的逐条输出逐字节一致（整段 `--dry` stdout 的唯一差异是汇总行新增 Wilson 区间），任何读数与口径不受并发影响。
 - **新增区间估计**：每臂通过率附 Wilson 95% 置信区间（如 `treated pass = 63% [43,80]`）。n=24 是小样本，宽区间本身就是「方向性证据」的数字形式，比文字兜底更硬；零新依赖。
 - **变更 README TL;DR 口径**：抬升区间由「+38~+75 across 11 models」改准为「+4 ~ +75——11 颗中 10 颗越过 +38，唯一下限 glm-4-flash（+4）如实报告为能力下限」，消除 headline 与明细表（glm-4-flash +4）的矛盾；评测数字一字未改。
 - **文档**：`guard-readme-numbers.mjs` 头部补边界声明（守卫证明「数字未改 + 概要可溯源」，不证明「数字本身正确」）；`docs/maintainer-runbook.md` 发版清单第 1 步补列第 6 步 README 守卫；README 双语 `--dry` 输出转写同步为含区间的新版。
@@ -20,6 +20,31 @@
 
 - **毒饵升级 v3（重做坏技能）**：负向臂注入材料 `t2/skills/runtime-resolution-and-abi-poison/inject.md` 重写为一份自信、可信的「三步定位法」错误流程，并机械核验其不含任何判据锚点词（NODE_MODULE_VERSION / abi / 模块版本 / rebuild / 重新编译 / 绝对路径 / where·which node / process.versions / 钉死·pin 等）——模型照抄仍判 0。`run-checks` 第 3 步 dry 自检仍 control 3/3、treated 0/3、lift −100，方向不变；真模型能否被带偏留待付费复跑。
 - **新增领域/知识型体裁试点（#3）**：新技能 `http-cache-semantics` + 任务 `cache-nocache-vs-nostore`（no-cache ≠ no-store 误区），带新旗标 `genrePilot`。默认全量跑、锁定的 8 任务尺与 11 模型 headline 表一律排除它，仅经 `T2_TASK` 点名触发；判分块新增对称的 fail-closed 正向闸（dry 下 treated 未过 control 即退出码 1），并接入 `run-checks` 第 8 步。dry 读数：control 0/3、treated 3/3。所有 headline 数字一字未改，中英数字镜像守卫照常通过。
+
+### 文档与 agent 基建（2026-10-24 ~ 10-28，本段于 11-20 补记）
+
+- **新增 `AGENTS.md`（95 行）**：给 AI agent 的项目工作规则，自我定位为「restatement, not source of truth」——与 README/文档冲突时以后者为准，避免多份真相源漂移。
+- **新增 `scripts/check-agents-doc.mjs`**：AGENTS.md 防漂移守卫——文档点名的路径、命令、旗标、环境变量须仍在仓里，任一缺席 fail-closed。自带 10 项 selftest：三条会红负对照（缺席目录 / 未知旗标 / 脚本不读的 env）、三条不假红（刻意缺席的 `out/` 与 `%SystemDrive%/` 不报警、散文里的 A/B 与绝对路径不被误判为声明）、点文件回归、正对照（每个声明都命中真实文件、违规归零，证明门不是恒红）、分母覆盖、反向自证。主检读数：路径声明 39 · 命令行 14 · 旗标 5 · env 5，missing=0；已接入 `npm test` 与 CI。
+- **新增 `llms.txt`**：面向 LLM 流量的项目摘要（llms.txt 标准），含核心声明、方法论要点（含「injection is activation-bypassing, every lift is an upper bound」与负向臂「open question, not a proven result」）与全部关键资源链接。
+- **README 新增 Contributing + Roadmap 两节**：Contributing 三条——最便宜的高价值贡献是写好一个 issue 而不是 PR、看到红先怀疑判据、判据语义改动必须附带能红反例；Roadmap 五条全部标为 open direction（负向臂转实测、扩体裁、收紧统计并自认 headline 为 n=24 单次跑、tier 废弃标 stale、端点垃圾扫描盲区）。
+- **负向臂扩编**：毒饵由 1 颗增至 2 颗（`runtime-abi-poison` + `race-sleep-poison`），两颗均接入 `npm test` 零 API 自检。
+- 以上变化此前未入账，本段补记。
+
+### T2 重构：可复现运行与离线报告（2026-11-01 ~ 11-02，零 API，本段于 11-20 补记）
+
+按 `docs/superpowers/plans/2026-11-01-agent-evals-trustworthy-runs.md` 的 11 个 Task 施工完成，目标：使用者无需相信作者自述即可运行、追溯、复现。
+
+- **T2 harness 模块化**：`smoke-ab.mjs` 拆成编排器 + `lib/` 六模块——`config.mjs`（CLI > 配置 JSON > env > 默认，配置文件含密钥即退 2）、`grader.mjs`（唯一判分入口，AND 门不变，新增 `criteriaSnapshot` 与稳定判据 id）、`stats.mjs`、`store.mjs`、`prompt-variants.mjs`、`tasks.mjs`。
+- **运行级指纹 + 断点续跑**：每次运行写 `out/t2/<run-id>/` 证据目录（`manifest.json` / `rows.jsonl` / `summary.json` / `report.md`，全部 gitignored）；manifest 含公开配置、任务提示、skill SHA256、判据 SHA256，全量 canonical 后 SHA256 成指纹，绝不含 `T2_API_KEY`。`--resume <run-dir>` 重算指纹，不一致 fail-closed 拒绝；只补跑缺失或末条仍 ERROR/TOOLCALL 的 cell，有效 cell 复用、JSONL 历史不删。
+- **统计升级为配对 bootstrap**：同一 task 的 control/treated 配成 pair，逐 pair 算 delta、逐 task 取均值，再对 task 做 2000 次有放回聚类抽样，固定种子 mulberry32 保证同一 rows 永远得到同一区间，输出 lift 的 95% CI。单臂或少于两个 task 时 paired=null，拒绝输出伪精确区间。双臂发送顺序由运行指纹哈希决定（`orderArmsForPair`），消除「总是 control 先发」的系统性偏向。原 valid-only 与「失败计入」两口径保留；headline 数字一字未改。
+- **`paired-v4` 提示变体尺**：8 颗锁尺任务各写 `variant-1`（同考察点、换场景措辞），检验结论是否只对某一问法成立；毒饵与体裁试点保持 base 不参与。`validateVariantCoverage` fail-closed 守卫（覆盖全部锁尺任务、变体非空且不等于 base）。默认尺仍是 `locked-v3`，历史读数不受影响——v3 每臂 24 cells、v4 每臂 48 cells。
+- **判据对抗 fixture + 变异测试**：`t2/fixtures/criteria.json` 为每条 check 提供独立正例片段、整体错误例、否定例、关键词堆砌例（不复制 DRY_ANSWERS）；变异测试逐条移除 check，证明「缺它的答案在原任务 FAIL、在变异任务 PASS」，判据被删必被抓住；forbid 同理。
+- **离线报告 `t2/report.mjs`**：只读 manifest + rows，不联网、不调模型，所有数字从 rows 复算，可与 `summary.json` 逐字段对账；支持 `--format json|markdown` 与 `--out`。附 `t2/t2.example.json`（仅公开字段，密钥仍从环境读）。
+- **`t2/selftest.mjs`**：30 个 node:test 用例，覆盖配置 fail-closed、隐私边界、dry 逐 cell 写盘、退出码 0/1/2、三口径统计、续跑、配对调度、fixture 对抗、变异测试、ruler 变体、离线报告、判据 id 参与指纹。
+- **fleet-eval 断言 11 → 12**：新增 `endpoints.junk-absent`（端点残留垃圾），从 `junk.absent` 抽出共享 `scanJunkTree` 排除/豁免匹配 helper，杜绝源树与端点口径漂移；core 仍 6 项，full 变 12 项。drill 扩为 A1/A2/S1/S2 四场景，接入 `npm test`。
+- **解析器限定边界 fail-closed**：`lib/parsers.mjs` 用逐字符状态机处理 PS 单双引号内 `#` 不截断、重复 frontmatter key 抛错、POEMS 扫描支持单引号/模板串/注释且不错误截半。
+- **守卫与 CI 扩展**：`guard-readme-numbers.mjs` 新增第 4 条不变量——两张首屏 SVG 的文本数字须是同语言 README 子集且中英多重集相等（banner 由 PNG 换为 SVG 以便可解析）；CI 与 `npm test` 新增全仓 `.mjs` 语法检查、T2 模块自检、负向臂自检×2、体裁试点自检、fleet drill。`npm test` 8 → 13 步，实测 13/13 全绿。
+- **验证边界（按计划第 11 Task 明确）**：陌生 agent 在干净目录按文档完成「运行→追溯→复跑→接入→提交反例」；独立 agent 试用不等于真实外部人类验收，未提供密钥时不声称已验证真实模型结果。
 
 ## [0.3.0] - 2026-10-19
 
